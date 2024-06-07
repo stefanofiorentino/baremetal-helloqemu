@@ -12,6 +12,6 @@ void print_uart0(const char *str) {
 }
 
 /* Entry function from startup.s */
-void c_entry() {
+extern "C" void c_entry() {
   print_uart0("Hello OpenEmbedded on ARM64!!!\n");
 }
