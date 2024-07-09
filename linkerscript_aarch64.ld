@@ -5,9 +5,9 @@ SECTIONS{
         /* QEMU when given -kernel adds 0x1000 */
         . = 0x40010000 ;
         /* Put startup code at the beginning */
-        /* Only put the text section of startup.o */
+        /* Only put the text section of  build/startup_aarch64.o */
         /* Put all other sections from others */
-        .stub : { startup.o(.text) }
+        .stub : {  build/startup_aarch64.o(.text) }
         .text : { *(.text) }
         .rodata : { *(.rodata) }
         .data : { *(.data) }

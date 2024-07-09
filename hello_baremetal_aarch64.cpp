@@ -1,17 +1,33 @@
-/* QEMU virt machine memory map sets VIRT_UART as 0x90000000 */
-#define UART0_BASE 0x09000000
+const unsigned int ARRAY_SIZE = 128;
 
-volatile unsigned int * const UART0DR = (unsigned int *)UART0_BASE;
-
-/* Until we reach to the end of the string, put each char on UART0 */
-void print_uart0(const char *str) {
-  while(*str != '\0') {
-    *UART0DR = (unsigned int)(*str);
-    str++;
-  }
+namespace {
+template <typename T, unsigned int _Size>
+struct array
+{
+    consteval explicit array() {
+        data = new T[_Size*sizeof(T)];
+        data[0] = 42;
+    }
+    consteval T front() const { return data[0]; }
+    consteval T back() const {return *(data+_Size-1);}
+    consteval unsigned int size() const { return _Size; }
+    consteval T& operator[] (unsigned int index) {
+        return *(data+index);
+    }
+    constexpr ~array() {delete[] data;}
+private:
+    T* data;
+};
 }
 
-/* Entry function from startup.s */
+consteval void test_size() {
+    static_assert(array<int, ARRAY_SIZE>().size() == ARRAY_SIZE);
+}
+consteval void test_subscript() {
+    static_assert(array<int, ARRAY_SIZE>()[0] ==  42);
+}
+
 extern "C" void c_entry() {
-  print_uart0("Hello OpenEmbedded on ARM64!!!\n");
+  test_size();
+  test_subscript();
 }

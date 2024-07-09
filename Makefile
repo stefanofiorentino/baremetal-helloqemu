@@ -24,7 +24,7 @@ build: link
 # Link objects using the provided linker script
 link: assemble compile
 	sed -i 's~startup.o~$(call contains,startup,${objs})~g' ${lscript}.ld
-	${LD} -T${lscript}.ld ${objs} -o ${executable}.elf
+	${LD} -T${lscript}.ld ${objs} -nostdlib -o ${executable}.elf
 
 # Assemble startup code
 assemble: builddir
@@ -32,7 +32,7 @@ assemble: builddir
 
 # Compile source but dont link
 compile:
-	${CXX} ${CFLAGS} ${LDFLAGS} -c $(filter hello%,${sources}).cpp -o $(call contains,hello,${objs})
+	${CXX} ${CXXFLAGS} ${LDFLAGS} -std=c++23 --freestanding -DDEBUG -c $(filter hello%,${sources}).cpp -o $(call contains,hello,${objs})
 
 builddir:
 	mkdir -p ${BUILDDIR}
