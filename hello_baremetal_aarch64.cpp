@@ -5,11 +5,11 @@ template <typename T, unsigned int _Size>
 struct array
 {
     consteval explicit array() {
-        data = new T[_Size*sizeof(T)];
+        data = new T[_Size];
         data[0] = 42;
     }
     consteval T front() const { return data[0]; }
-    consteval T back() const {return *(data+_Size-1);}
+    consteval T back() const {return data[_Size-1];}
     consteval unsigned int size() const { return _Size; }
     consteval T& operator[] (unsigned int index) {
         return *(data+index);
