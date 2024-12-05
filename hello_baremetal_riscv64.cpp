@@ -1,9 +1,7 @@
-/* VIRT_UART0 base address is 0x10000000 according to QEMU source code*/
 #define VIRT_UART0 0x10000000
 
 volatile unsigned int * const UART0DR = (unsigned int *)VIRT_UART0;
 
-/* Until we reach to the end of the string, put each char on UART0 */
 void print_uart0(const char *str) {
   while(*str != '\0') {
     *UART0DR = (unsigned int)(*str);
@@ -11,82 +9,46 @@ void print_uart0(const char *str) {
   }
 }
 
-// const unsigned int ARRAY_SIZE = 128;
+const unsigned int ARRAY_SIZE = 64;
 
-// namespace {
-// template <typename T, unsigned int _Size>
-// struct array
-// {
-//     consteval explicit array() {
-//         data = new T[_Size];
-//         for (int i=0; i<_Size; i++) {
-//             data[i] = 0;
-//         }
-//         index = 0;
-//     }
-//     consteval T const& front() const { return data[0]; }
-//     consteval T const& back() const { return data[(index)?index-1:0]; }
-//     consteval unsigned int size() const { return index; }
-//     consteval unsigned int capacity() const { return _Size; }
-//     consteval T& operator[] (unsigned int _index) {
-//         return *(data+_index);
-//     }
-//     consteval T const& push_back(T t) {
-//         data[index++]=t;
-//         return back();
-//     }
-//     consteval T const& pop_back() {
-//         return data[--index];
-//     }
-//     constexpr ~array() noexcept{delete[] data;}
-// private:
-//     T* data;
-//     unsigned int index;
-// };
-// }
+namespace {
+template <typename T, unsigned int _Size>
+struct array
+{
+    consteval unsigned int capacity() const { return _Size; }
+};
+}
 
-// consteval void test_size() {
-//     static_assert(0 == array<int, ARRAY_SIZE>().size());
-// }
+// ChatGPT prompt: can you help me implementing a plain C function, without using any function from the standard library that is able to transform an integer in a string?
+void intToStr(unsigned int num, char* str) {
+    // Temporary buffer to store the reversed digits
+    char buffer[20]; // Enough space for a 64-bit integer and null-terminator
+    unsigned int i = 0;
 
-// consteval void test_capacity() {
-//     static_assert(ARRAY_SIZE == array<int, ARRAY_SIZE>().capacity());
-// }
+    // Convert the number to its digits in reverse order
+    do {
+        buffer[i++] = (num % 10) + '0'; // Extract last digit and convert to character
+        num /= 10;
+    } while (num > 0);
 
-// consteval void test_subscript() {
-//     static_assert(0 == array<int, ARRAY_SIZE>()[0]);
-// }
+    // Reverse the string into the output buffer
+    int j = 0;
+    while (i > 0) {
+        str[j++] = buffer[--i]; // Reverse copy from buffer
+    }
 
-// consteval void test_front() {
-//     static_assert(0 == array<int, ARRAY_SIZE>().front());
-// }
+    // Null-terminate the resulting string
+    str[j] = '\0';
+}
 
-// consteval void test_back() {
-//     static_assert(0 == array<int, ARRAY_SIZE>().back());
-// }
-
-// consteval unsigned int size_after_one_push_back() {
-//     auto arr = array<int, ARRAY_SIZE>();
-//     arr.push_back(84);
-//     return arr.size();
-// }
-
-// consteval void test_push_back() {
-//     static_assert(84 == array<int, ARRAY_SIZE>().push_back(84));
-//     static_assert(1 == size_after_one_push_back());
-// }
-
-// consteval unsigned int size_after_one_push_back_and_one_pop_back() {
-//     auto arr = array<int, ARRAY_SIZE>();
-//     arr.push_back(84);
-//     arr.pop_back();
-//     return arr.size();
-// }
-
-// consteval void test_pop_back()  {
-//     static_assert(0 == size_after_one_push_back_and_one_pop_back());
-// }
+consteval void test_capacity() {
+    static_assert(ARRAY_SIZE == array<int, ARRAY_SIZE>().capacity());
+}
 
 extern "C" void c_entry() {
-    print_uart0("Hello OpenEmbedded on RISC-V 64!\n");
+    char str[20];
+    print_uart0("Hello OpenEmbedded on RISC-V ");
+    intToStr(array<int, ARRAY_SIZE>().capacity(), str);
+    print_uart0(str);
+    print_uart0("!\n");
 }
