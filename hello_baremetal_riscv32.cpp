@@ -1,23 +1,21 @@
+#include "array.hpp"
+
 #define VIRT_UART0 0x10000000
 
-const unsigned int ARRAY_SIZE = 64;
-
 namespace {
-template <typename T, unsigned int _Size>
-struct array final
-{
-    consteval unsigned int capacity() const { return _Size; }
-};
-}
-
-// compile-time (consteval) struct to abstract the uart peripheral
-namespace {
-template <unsigned int _Base>
 struct uart_t final
 {
+    constexpr explicit uart_t(unsigned int _Base) : 
+        UARTDR( const_cast<volatile unsigned int * const>(
+                    static_cast<unsigned int *>(
+                        reinterpret_cast<void *>(_Base)
+                    )
+                )
+        ) {
+    }
     void print(const char *str) {
         while(*str != '\0') {
-            *UART0DR = (unsigned int)(*str);
+            *UARTDR = (unsigned int)(*str);
             str++;
         }
     }
@@ -25,11 +23,7 @@ struct uart_t final
         print(str);
         return *this;
     }
-    volatile unsigned int * const UART0DR = const_cast<volatile unsigned int * const>(
-        static_cast<unsigned int *>(
-            reinterpret_cast<void *>(_Base)
-        )
-    );
+    volatile unsigned int * const UARTDR;
 };
 }
 
@@ -57,17 +51,12 @@ extern "C" void intToStr(unsigned int num, char* str) {
     str[j] = '\0';
 }
 
-consteval void test_capacity() {
-    static_assert(ARRAY_SIZE == array<int, ARRAY_SIZE>().capacity());
-}
 
 extern "C" void c_entry() {
     char str[20];
-    using uart0_t = uart_t<VIRT_UART0>;
-    uart0_t uart0;
+    auto uart0 = uart_t(VIRT_UART0);
     uart0.print("Hello OpenEmbedded on RISC-V ");
     intToStr(array<int, ARRAY_SIZE>().capacity(), str);
     uart0.print(str);
-    uart0 << " with C++20";
-    uart0.print("!\n");
+    uart0 << " with C++20" << "!\n";
 }
