@@ -1,4 +1,4 @@
-.equ STACK_SIZE, 4096
+.equ STACK_SIZE, 1024
 .equ STACK_SHIFT, 10
 .equ HARTS, 4
 

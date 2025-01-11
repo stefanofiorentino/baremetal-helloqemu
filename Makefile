@@ -32,7 +32,8 @@ assemble: builddir
 
 # Compile source but dont link
 compile:
-	${CXX} ${CXXFLAGS} ${LDFLAGS} -std=c++23 --freestanding -DDEBUG -mcmodel=medany -c $(filter hello%,${sources}).cpp -o $(call contains,hello,${objs})
+	${CXX} ${CXXFLAGS} ${LDFLAGS} -std=c++23 --freestanding -DDEBUG -c $(filter hello%,${sources}).cpp -o $(call contains,hello,${objs})
+# ${CXX} ${CXXFLAGS} ${LDFLAGS} -std=c++23 --freestanding -DDEBUG -mcmodel=medany -fno-asynchronous-unwind-tables -fno-exceptions -fno-rtti -Wall -Wextra -O0 -S $(filter hello%,${sources}).cpp
 
 builddir:
 	mkdir -p ${BUILDDIR}

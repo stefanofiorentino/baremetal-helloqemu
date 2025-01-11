@@ -5,9 +5,9 @@ SECTIONS{
         /* QEMU boots from BIOS on RISC-V */
         . =0x80000000 ;
         /* Put startup code at the beginning */
-        /* Only put the text section of  build/startup_riscv64.o */
+        /* Only put the text section of  build/startup_riscv32.o */
         /* Put all other sections from others */
-        .stub : {  build/startup_riscv64.o(.text) }
+        .stub : {  build/startup_riscv32.o(.text) }
         .text : { *(.text) }
         .rodata : { *(.rodata) }
         .data : { *(.data) }
