@@ -3,7 +3,7 @@
 #define STEP_2 2
 #define STEP_3 3
 #define STEP_4 4
-#define CURRENT_STEP STEP_1
+#define CURRENT_STEP STEP_2
 
 #if CURRENT_STEP == STEP_0
 #include "step0.hpp"
