@@ -5,7 +5,7 @@
 
 #define VIRT_UART0 0x10000000
 
-constexpr void print(volatile unsigned int* const uart, const char * str) {
+void print(volatile unsigned int* const uart, const char * str) {
     while(*str != '\0')
     {
         *uart = (unsigned int) *str;
