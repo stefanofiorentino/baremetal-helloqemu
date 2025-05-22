@@ -17,6 +17,6 @@ void print_uart0(const char *str) {
 }
 
 extern "C" void c_entry() {
-  print_uart0("Hello, world!\n");
+  print_uart0("Hello, world! (step 0)\n");
   while(1);
 }

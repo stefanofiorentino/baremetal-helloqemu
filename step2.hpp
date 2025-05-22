@@ -38,6 +38,6 @@ static_assert(test_assignment_uart(), "test_assignment_uart() failed");
 
 extern "C" void c_entry() {
     volatile unsigned int * const uart0 = (volatile unsigned int*) VIRT_UART0;
-    print(uart0, "Hello, world!\n");
+    print(uart0, "Hello, world! (step 2)\n");
     while(1);
 }
