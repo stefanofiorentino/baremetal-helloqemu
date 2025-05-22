@@ -26,8 +26,8 @@ struct mock_uart {
         }
     }
 private:
-    char * buffer;
-    unsigned int N;
+    char * const buffer;
+    const unsigned int N;
     unsigned int index;
 };
 
