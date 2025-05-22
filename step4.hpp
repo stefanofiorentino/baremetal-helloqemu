@@ -52,7 +52,7 @@ consteval bool test_print() {
 }
 static_assert(test_print(), "test_print() failed");
 
-constexpr bool strcmq(const char * a, const char * b) {
+constexpr bool strcmp(const char * a, const char * b) {
     while(*a != '\0' && *b != '\0') {
         if (*a != *b) {
             return false;
@@ -71,10 +71,13 @@ consteval bool test_print_content() {
 
     // act
     auto uart = mock_uart(actual, STRING_SIZE);
+    if (!strcmp("", actual)) {
+        return false;
+    }
     print(uart, "Hello, world!\n");
 
     // assert
-    return strcmq(expected, actual);
+    return strcmp(expected, actual);
 }
 static_assert(test_print_content(), "test_print_content() failed");
 
